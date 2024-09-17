@@ -38,10 +38,14 @@ func (s *Server) readLoop(conn *websocket.Conn) {
 		msg := buf[:n]
 		var position Position
 		if err := json.Unmarshal(msg, &position); err == nil {
+			s.mu.Lock()
 			s.positions[conn.Request().RemoteAddr] = position
+			s.mu.Unlock()
 		}
-		fmt.Printf("current positions: %v\n", s.positions)
+		// fmt.Printf("current positions: %v\n", s.positions)
+		s.mu.Lock()
 		positionsJSON, err := json.Marshal(s.positions)
+		s.mu.Unlock()
 		if err != nil {
 			fmt.Println("Error marshalling positions:", err)
 			continue

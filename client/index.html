@@ -76,7 +76,7 @@
 
             for (const [client, position] of Object.entries(positions)) {
                 ctx.beginPath();
-                ctx.arc(position.x, position.y, 10, 0, 2 * Math.PI); // Draw a circle with radius 10
+                ctx.arc(position.x, position.y, 5, 0, 2 * Math.PI); // Draw a circle with radius 10
                 ctx.fillStyle = 'red';
                 ctx.fill();
                 ctx.stroke();
@@ -87,6 +87,24 @@
             const canvas = document.getElementById('canvas');
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
+        });
+
+        document.addEventListener('visibilitychange', () => {
+            let x = 0;
+            let y = 0;
+            if (document.hidden) {
+                intervalId = setInterval(() => {
+                    x += 10;
+                    y += 10;
+                    const messagejson = JSON.stringify({
+                        x: x,
+                        y: y
+                    });
+                    ws.send(messagejson);
+                }, 0);
+            } else {
+                clearInterval(intervalId);
+            }
         });
     </script>
 </body>
